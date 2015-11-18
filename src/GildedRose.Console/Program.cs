@@ -43,79 +43,101 @@ namespace GildedRose.Console
 
         }
 
+        /// <summary>
+        /// Increments the original value by the increment value. Return value cannot be greater than 50
+        /// or less than 0.
+        /// </summary>
+        /// <param name="originalValue">Quality value to increment</param>
+        /// <param name="increment">Number to increment by, can be negative</param>
+        /// <returns>New quality value</returns>
+        private static int IncrementItemQuality(int originalValue, int increment)
+        {
+            if (increment > 0)
+            {
+                if (originalValue + increment <= 50) originalValue += increment;
+                else originalValue = 50;
+            }
+            else
+            {
+                if (originalValue + increment > 0) originalValue += increment;
+                else originalValue = 0;
+            }
+            return originalValue;
+        }
+
         static public void UpdateQuality()
         {
             for (var i = 0; i < Items.Count; i++)
             {
-                if (Items[i].Name != "Aged Brie" && Items[i].Name != "Backstage passes to a TAFKAL80ETC concert")
+                switch (Items[i].Name)
                 {
-                    if (Items[i].Quality > 0)
-                    {
-                        if (Items[i].Name != "Sulfuras, Hand of Ragnaros")
+                    case "Sulfuras, Hand of Ragnaros":
+                        // Never has to be sold, never degenerates.
+                        break;
+
+                    case "Backstage passes to a TAFKAL80ETC concert":
+                        // Backstage passes increase in quality with age.                                               
+                        if (Items[i].SellIn < 6)
                         {
-                            Items[i].Quality = Items[i].Quality - 1;
+                            // 5 days or less, increase by 3.
+                            Items[i].Quality = IncrementItemQuality(Items[i].Quality, 3);
                         }
-                    }
-                }
-                else
-                {
-                    if (Items[i].Quality < 50)
-                    {
-                        Items[i].Quality = Items[i].Quality + 1;
-
-                        if (Items[i].Name == "Backstage passes to a TAFKAL80ETC concert")
+                        else if (Items[i].SellIn < 11)
                         {
-                            if (Items[i].SellIn < 11)
-                            {
-                                if (Items[i].Quality < 50)
-                                {
-                                    Items[i].Quality = Items[i].Quality + 1;
-                                }
-                            }
-
-                            if (Items[i].SellIn < 6)
-                            {
-                                if (Items[i].Quality < 50)
-                                {
-                                    Items[i].Quality = Items[i].Quality + 1;
-                                }
-                            }
-                        }
-                    }
-                }
-
-                if (Items[i].Name != "Sulfuras, Hand of Ragnaros")
-                {
-                    Items[i].SellIn = Items[i].SellIn - 1;
-                }
-
-                if (Items[i].SellIn < 0)
-                {
-                    if (Items[i].Name != "Aged Brie")
-                    {
-                        if (Items[i].Name != "Backstage passes to a TAFKAL80ETC concert")
-                        {
-                            if (Items[i].Quality > 0)
-                            {
-                                if (Items[i].Name != "Sulfuras, Hand of Ragnaros")
-                                {
-                                    Items[i].Quality = Items[i].Quality - 1;
-                                }
-                            }
+                            // 10 days or less, increase by 2.
+                            Items[i].Quality = IncrementItemQuality(Items[i].Quality, 2);
                         }
                         else
                         {
-                            Items[i].Quality = Items[i].Quality - Items[i].Quality;
+                            // Above 10 days increase by 1.
+                            Items[i].Quality = IncrementItemQuality(Items[i].Quality, 1);
                         }
-                    }
-                    else
-                    {
-                        if (Items[i].Quality < 50)
+                        // Sell in days decreased by 1.
+                        Items[i].SellIn--;
+                        // When beyond sell in days, backstage passes have 0 quality.
+                        if (Items[i].SellIn < 0)
                         {
-                            Items[i].Quality = Items[i].Quality + 1;
+                            Items[i].Quality = 0;
                         }
-                    }
+                        break;
+
+                    case "Aged Brie":
+                        // Aged brie gets better with age, but never better than 50.
+                        Items[i].Quality = IncrementItemQuality(Items[i].Quality, 1);
+                        // Sell in days decreased by 1.
+                        Items[i].SellIn--;
+                        // Aged brie increases in quality twice as fast when past sell in date.
+                        if (Items[i].SellIn < 0)
+                        {
+                            Items[i].Quality = IncrementItemQuality(Items[i].Quality, 1);
+                        }
+                        break;
+
+                    case "Conjured Mana Cake":
+                        // Conjured items degenerate twice as fast as normal items to a minimum of 0.
+                        Items[i].Quality = IncrementItemQuality(Items[i].Quality, -2);
+                        // Sell in days decreased by 1.
+                        Items[i].SellIn--;
+                        // Conjured items degenerate twice as quickly when past sell in days.
+                        if (Items[i].SellIn < 0)
+                        {
+                            Items[i].Quality = IncrementItemQuality(Items[i].Quality, -2);
+                        }
+                        break;
+
+                    default:
+                        // Normal items degenerate to a minimum of 0.
+                        Items[i].Quality = IncrementItemQuality(Items[i].Quality, -1);
+                        // Sell in days decreased by 1.
+                        Items[i].SellIn--;
+                        // Normal items degenerate twice as quickly when past sell in days.
+                        if (Items[i].SellIn < 0)
+                        {
+                            Items[i].Quality = IncrementItemQuality(Items[i].Quality, -1);
+                        }
+                        break;
                 }
+
             }
         }
 
