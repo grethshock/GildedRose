@@ -2,39 +2,48 @@
 
 namespace GildedRose.Console
 {
-    class Program
+    public class Program
     {
-        IList<Item> Items;
+        public static IList<Item> Items;
         static void Main(string[] args)
         {
             System.Console.WriteLine("OMGHAI!");
+            System.Console.WriteLine();
 
-            var app = new Program()
-                          {
-                              Items = new List<Item>
-                                          {
-                                              new Item {Name = "+5 Dexterity Vest", SellIn = 10, Quality = 20},
-                                              new Item {Name = "Aged Brie", SellIn = 2, Quality = 0},
-                                              new Item {Name = "Elixir of the Mongoose", SellIn = 5, Quality = 7},
-                                              new Item {Name = "Sulfuras, Hand of Ragnaros", SellIn = 0, Quality = 80},
-                                              new Item
-                                                  {
-                                                      Name = "Backstage passes to a TAFKAL80ETC concert",
-                                                      SellIn = 15,
-                                                      Quality = 20
-                                                  },
-                                              new Item {Name = "Conjured Mana Cake", SellIn = 3, Quality = 6}
-                                          }
+            Items = new List<Item>
+                                        {
+                                            new Item {Name = "+5 Dexterity Vest", SellIn = 10, Quality = 20},
+                                            new Item {Name = "Aged Brie", SellIn = 2, Quality = 0},
+                                            new Item {Name = "Elixir of the Mongoose", SellIn = 5, Quality = 7},
+                                            new Item {Name = "Sulfuras, Hand of Ragnaros", SellIn = 0, Quality = 80},
+                                            new Item
+                                                {
+                                                    Name = "Backstage passes to a TAFKAL80ETC concert",
+                                                    SellIn = 15,
+                                                    Quality = 20
+                                                },
+                                            new Item {Name = "Conjured Mana Cake", SellIn = 3, Quality = 6}
+                                        };
+            for (int i = 0; i < Items.Count; i++)
+            {
+                System.Console.WriteLine(string.Format("Item : {0}, Quality : {1}, SellIn : {2}", Items[i].Name, Items[i].Quality, Items[i].SellIn));
+            }
 
-                          };
+            Program.UpdateQuality();
+            System.Console.WriteLine();
+            System.Console.WriteLine("Updated...");
+            System.Console.WriteLine();
 
-            app.UpdateQuality();
+            for (int i = 0; i < Items.Count; i++)
+            {
+                System.Console.WriteLine(string.Format("Item : {0}, Quality : {1}, SellIn : {2}", Items[i].Name, Items[i].Quality, Items[i].SellIn));
+            }
 
             System.Console.ReadKey();
 
         }
 
-        public void UpdateQuality()
+        static public void UpdateQuality()
         {
             for (var i = 0; i < Items.Count; i++)
             {
@@ -109,6 +118,7 @@ namespace GildedRose.Console
                 }
             }
         }
+
 
     }
 

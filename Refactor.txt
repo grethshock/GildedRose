@@ -1,0 +1,10 @@
+Author : Gareth Taylor
+Date   : 18/11/2015
+
+Revision - 1.0
+Details  - General details.
+
+Updated nuget packages.
+Made Items property static, and also UpdateQuality method static.
+Addeded in unit tests and ran to ensure they work before refactor.
+Also added unit tests to cater for refactor, these fail so commented out.
